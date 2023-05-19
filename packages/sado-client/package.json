@@ -1,0 +1,46 @@
+{
+  "name": "@sado/client",
+  "version": "0.0.0",
+  "description": "Client for simplified interaction with the Sado Protocol",
+  "repository": "https://github.com/sadoprotocol/sado-js",
+  "bugs": "https://github.com/sadoprotocol/sado-js/issues",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "sado",
+    "sado-protocol",
+    "sdk"
+  ],
+  "scripts": {
+    "build": "tsc -b ./tsconfig.build.json",
+    "flush": "npm run clean && rm -rf ./node_modules",
+    "clean": "rm -rf ./.turbo ./dist",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "cross-fetch": "3.1.6"
+  },
+  "devDependencies": {
+    "@sado/jest": "workspace:*"
+  },
+  "eslintConfig": {
+    "parserOptions": {
+      "project": "./tsconfig.json"
+    },
+    "extends": [
+      "@sado"
+    ]
+  },
+  "lint-staged": {
+    "*": [
+      "prettier --write --ignore-unknown"
+    ],
+    "*.{ts,tsx}": [
+      "eslint --fix"
+    ]
+  }
+}

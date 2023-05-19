@@ -1,0 +1,30 @@
+{
+  "name": "sado-js",
+  "version": "0.0.0",
+  "private": true,
+  "repository": "https://github.com/sadoprotocol/sado-js",
+  "bugs": "https://github.com/sadoprotocol/sado-js/issues",
+  "license": "MIT",
+  "scripts": {
+    "prepare": "husky install && chmod ug+x .husky/*",
+    "publish": "node ./scripts/publish.js",
+    "local": "turbo run local",
+    "build": "turbo run build",
+    "flush": "turbo run flush && rm -rf ./node_modules",
+    "clean": "turbo run clean",
+    "lint": "turbo run lint -- --fix",
+    "test": "turbo run test -- --forceExit"
+  },
+  "devDependencies": {
+    "@sado/eslint-config": "workspace:*",
+    "@sado/prettier": "workspace:*",
+    "@sado/typescript": "workspace:*",
+    "turbo": "1.9.1"
+  },
+  "lint-staged": {
+    "*": [
+      "prettier --write --ignore-unknown"
+    ]
+  },
+  "prettier": "@sado/prettier"
+}

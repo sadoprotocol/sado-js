@@ -1,0 +1,16 @@
+{
+  "name": "@sado/prettier",
+  "version": "0.0.0",
+  "main": "index.js",
+  "files": [
+    "index.js"
+  ],
+  "scripts": {
+    "flush": "rm -rf ./node_modules"
+  },
+  "dependencies": {
+    "husky": "8.0.3",
+    "lint-staged": "13.2.2",
+    "prettier": "2.8.8"
+  }
+}

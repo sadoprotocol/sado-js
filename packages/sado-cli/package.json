@@ -1,0 +1,37 @@
+{
+  "name": "@sado/cli",
+  "version": "0.0.0",
+  "description": "Command line interface for interacting with the sado protocol",
+  "repository": "https://github.com/sadoprotocol/sado-js",
+  "bugs": "https://github.com/sadoprotocol/sado-js/issues",
+  "bin": {
+    "sado": "./dist/index.js"
+  },
+  "scripts": {
+    "local": "npm uninstall -g && npm run build && npm i -g",
+    "build": "tsc -b ./tsconfig.build.json",
+    "flush": "npm run clean && rm -rf ./node_modules",
+    "clean": "rm -rf ./.turbo ./dist",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@sado/client": "workspace:*",
+    "clipanion": "3.2.0"
+  },
+  "eslintConfig": {
+    "parserOptions": {
+      "project": "./tsconfig.json"
+    },
+    "extends": [
+      "@sado"
+    ]
+  },
+  "lint-staged": {
+    "*": [
+      "prettier --write --ignore-unknown"
+    ],
+    "*.{ts,tsx}": [
+      "eslint --fix"
+    ]
+  }
+}

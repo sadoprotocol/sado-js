@@ -1,0 +1,13 @@
+{
+  "name": "@sado/typescript",
+  "version": "0.0.0",
+  "files": [
+    "tsconfig.json"
+  ],
+  "scripts": {
+    "flush": "rm -rf ./node_modules"
+  },
+  "dependencies": {
+    "typescript": "^5.0.4"
+  }
+}
