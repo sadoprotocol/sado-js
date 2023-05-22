@@ -5,7 +5,7 @@
   "repository": "https://github.com/sadoprotocol/sado-js",
   "bugs": "https://github.com/sadoprotocol/sado-js/issues",
   "bin": {
-    "sado": "./dist/index.js"
+    "sado": "./cli.js"
   },
   "scripts": {
     "local": "npm uninstall -g && npm run build && npm i -g",

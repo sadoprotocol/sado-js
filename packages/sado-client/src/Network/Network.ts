@@ -24,4 +24,9 @@ export function isValidNetwork(value: unknown): value is Network {
  |--------------------------------------------------------------------------------
  */
 
+export type NetworkProvider = {
+  set(value: Network): void;
+  get(): Network;
+};
+
 export type Network = "mainnet" | "testnet" | "regtest";

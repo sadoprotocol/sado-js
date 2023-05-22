@@ -1,6 +1,8 @@
-import { JsonRpc, NetworkProvider } from "./JsonRpc";
-import { Lookup } from "./Lookup";
-import { DEFAULT_NETWORK, Network } from "./Network";
+import { JsonRpc } from "./JsonRpc";
+import { Network, NetworkMemoryProvider, NetworkProvider } from "./Network";
+import { makeOfferService, OfferService } from "./Services/Offer";
+import { makeOrderService, OrderService } from "./Services/Order";
+import { makeOrderbookService, OrderbookService } from "./Services/Orderbook";
 
 /*
  |--------------------------------------------------------------------------------
@@ -24,40 +26,29 @@ import { DEFAULT_NETWORK, Network } from "./Network";
  */
 
 export class SadoClient {
-  readonly lookup: Lookup;
   readonly rpc: JsonRpc;
 
+  readonly order: OrderService;
+  readonly offer: OfferService;
+  readonly orderbook: OrderbookService;
+
+  #network: NetworkProvider;
+
   constructor(readonly url: string, options?: Options) {
-    this.rpc = new JsonRpc(url, options?.network ?? getNetworkSwitcher());
-    this.lookup = makeLookupService(this);
+    this.rpc = new JsonRpc(url);
+    this.order = makeOrderService(this);
+    this.offer = makeOfferService(this);
+    this.orderbook = makeOrderbookService(this);
+    this.#network = options?.network ?? new NetworkMemoryProvider();
   }
-}
 
-/*
- |--------------------------------------------------------------------------------
- | Service Composers
- |--------------------------------------------------------------------------------
- |
- | To allow for easier composition of service implementations the developer can
- | instantiate their own SADO SDK instance and pass in their own service handlers.
- | This is especially useful for testing and mocking the services.
- |
- */
+  set network(value: Network) {
+    this.#network.set(value);
+  }
 
-function getNetworkSwitcher(value: Network = DEFAULT_NETWORK) {
-  return {
-    value,
-    set(value: Network) {
-      this.value = value;
-    },
-    get(): Network {
-      return this.value;
-    }
-  };
-}
-
-function makeLookupService(sado: SadoClient, Service = Lookup) {
-  return new Service(sado);
+  get network() {
+    return this.#network.get();
+  }
 }
 
 /*
@@ -72,5 +63,7 @@ type Options = {
 };
 
 type Services = {
-  Lookup: typeof Lookup;
+  OrderService: typeof OrderService;
+  OfferService: typeof OfferService;
+  OrderbookService: typeof OrderbookService;
 };

@@ -1,24 +1,10 @@
 import fetch from "cross-fetch";
 
-import { Network } from "./Network";
-
 export class JsonRpc {
-  #network: NetworkProvider;
-
-  constructor(readonly url: string, network: NetworkProvider) {
-    this.#network = network;
-  }
+  constructor(readonly url: string) {}
 
   get id() {
     return Math.floor(Math.random() * 100000);
-  }
-
-  set network(value: Network) {
-    this.#network.set(value);
-  }
-
-  get network() {
-    return this.#network.get();
   }
 
   /**
@@ -28,7 +14,7 @@ export class JsonRpc {
    * @param params - JSON-RPC 2.0 parameters.
    */
   notify(method: string, params?: Params): void {
-    fetch(`${this.url}/rpc${getQueryString({ network: this.network })}`, {
+    fetch(`${this.url}/rpc`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -50,7 +36,7 @@ export class JsonRpc {
     } else {
       params = paramsOrId;
     }
-    const response = await fetch(`${this.url}/rpc${getQueryString({ network: this.network })}`, {
+    const response = await fetch(`${this.url}/rpc`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -79,17 +65,6 @@ export class JsonRpc {
  |--------------------------------------------------------------------------------
  */
 
-function getQueryString(params: Record<string, any>): string {
-  const query: string[] = [];
-  for (const key in params) {
-    query.push(`${key}=${encodeURIComponent(params[key])}`);
-  }
-  if (query.length) {
-    return `?${query.join("&")}`;
-  }
-  return "";
-}
-
 function isJsonRpcId(value: unknown): value is Id {
   return isString(value) || isInteger(value) || value === null;
 }
@@ -116,8 +91,3 @@ function isString(value: any): value is string {
 type Id = string | number | null;
 
 export type Params = unknown[] | Record<string, any>;
-
-export type NetworkProvider = {
-  set(value: Network): void;
-  get(): Network;
-};
