@@ -4,6 +4,24 @@ export class OrderbookService {
   constructor(readonly sado: SadoClient) {}
 
   /**
+   * Retrieve orderbook analytics data for the given address.
+   *
+   * @param address - Address to retrieve analytics for.
+   *
+   * @returns Analytics data.
+   */
+  async analytics(address: string): Promise<any> {
+    return this.sado.rpc.call<any>(
+      "orderbook.analytics",
+      {
+        address,
+        network: this.sado.network
+      },
+      this.sado.rpc.id
+    );
+  }
+
+  /**
    * Retrieve orderbook for given address.
    *
    * @param address - Address to retrieve orderbook for.

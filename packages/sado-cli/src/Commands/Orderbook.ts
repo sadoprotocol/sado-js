@@ -3,14 +3,28 @@ import { Option } from "clipanion";
 
 import { ApiCommand } from "../ApiCommand";
 
-class OrderbookGet extends ApiCommand {
-  static paths = [["orderbook.get"]];
+class OrderbookAnalytics extends ApiCommand {
+  static paths = [["orderbook.analytics"]];
 
-  cid = Option.String();
+  address = Option.String();
 
   async execute(): Promise<void> {
     try {
-      console.log(await this.client.orderbook.get(this.cid));
+      console.log(await this.client.orderbook.analytics(this.address));
+    } catch (error) {
+      console.error(`Failed to retrieve orderbook analytics: ${error.message}`);
+    }
+  }
+}
+
+class OrderbookGet extends ApiCommand {
+  static paths = [["orderbook.get"]];
+
+  address = Option.String();
+
+  async execute(): Promise<void> {
+    try {
+      console.log(await this.client.orderbook.get(this.address));
     } catch (error) {
       console.error(`Failed to retrieve orderbook: ${error.message}`);
     }
@@ -20,7 +34,7 @@ class OrderbookGet extends ApiCommand {
 class OrderbookOrders extends ApiCommand {
   static paths = [["orderbook.orders"]];
 
-  cid = Option.String();
+  address = Option.String();
 
   status = Option.String("--status", {
     required: false,
@@ -46,7 +60,7 @@ class OrderbookOrders extends ApiCommand {
     }
 
     try {
-      console.log(await this.client.orderbook.orders(this.cid, filter));
+      console.log(await this.client.orderbook.orders(this.address, filter));
     } catch (error) {
       console.error(`Failed to retrieve orders: ${error.message}`);
     }
@@ -56,7 +70,7 @@ class OrderbookOrders extends ApiCommand {
 class OrderbookOffers extends ApiCommand {
   static paths = [["orderbook.offers"]];
 
-  cid = Option.String();
+  address = Option.String();
 
   status = Option.String("--status", {
     required: false,
@@ -82,7 +96,7 @@ class OrderbookOffers extends ApiCommand {
     }
 
     try {
-      console.log(await this.client.orderbook.offers(this.cid, filter));
+      console.log(await this.client.orderbook.offers(this.address, filter));
     } catch (error) {
       console.error(`Failed to retrieve offers: ${error.message}`);
     }
@@ -97,4 +111,4 @@ function isOrderType(value: unknown): value is "sell" | "buy" {
   return value === "sell" || value === "buy";
 }
 
-export const orderbook = [OrderbookGet, OrderbookOrders, OrderbookOffers];
+export const orderbook = [OrderbookAnalytics, OrderbookGet, OrderbookOrders, OrderbookOffers];
