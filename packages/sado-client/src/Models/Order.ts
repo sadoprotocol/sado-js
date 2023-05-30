@@ -1,107 +1,146 @@
-/**
- * Order is created by either a seller or buyer.
- *
- * ### SELL
- *
- * A sell order who wants to sell or trade their ordinals/inscriptions. A sell
- * order can contain either `satoshis` or `cardinals` representing the minimum
- * amount they want to sell for. Or it can contain a `satoshi` which represents
- * a specific transaction at a vout location that they want to execute a trade
- * for.
- *
- * In the case of a trade the `location` represents the location which they
- * want to give. And the `satoshi` represents the location they want to receive.
- *
- * ### BUY
- *
- * A buy order who wants to buy or trade ordinals/inscriptions. A buy order can
- * contain either `satoshis` or `cardinals` representing the amount that they
- * wish to buy for. Or it can contain a `satoshi` which represents a specific
- * transaction at a vout location that they want to trade for.
- *
- * In the case of a trade the `location` represents the location which they
- * wish to give, and the `satoshi` represents the location they want to receive.
- *
- * ### VALIDATION
- *
- *  - An order must have one of [satoshis | cardinals | satoshi].
- */
-export type Order = {
+import { SadoClient } from "..";
+import { Signature, SignatureSettings } from "./Signature";
+
+export class Order {
+  cid?: string;
+
+  readonly type: OrderType;
+  readonly ts: number;
+  readonly location: string;
+  readonly cardinals: number;
+  readonly maker: string;
+
+  readonly expiry?: number;
+  readonly satoshi?: number;
+  readonly meta?: Record<string, any>;
+
+  signature?: Signature;
+
+  constructor(readonly sado: SadoClient, order: OrderPayload) {
+    this.type = order.type;
+    this.ts = order.ts;
+    this.location = order.location;
+    this.cardinals = order.cardinals;
+    this.maker = order.maker;
+    this.expiry = order.expiry;
+    this.satoshi = order.satoshi;
+    this.meta = order.meta;
+  }
+
+  static for(sado: SadoClient, record: OrderRecord): Order {
+    const order = new Order(sado, record);
+    order.cid = record.cid;
+    order.signature = new Signature(record.signature, {
+      format: record.signature_format,
+      desc: record.desc
+    });
+    return order;
+  }
+
+  /**
+   * Get a message used to sign the order for future verification.
+   *
+   * The signed message is used to verify the maker authenticity by simply validating
+   * the signature against the maker address.
+   *
+   * @returns Message to sign.
+   */
+  getMessage(): string {
+    return Buffer.from(
+      JSON.stringify({
+        type: this.type,
+        ts: this.ts,
+        location: this.location,
+        cardinals: this.cardinals,
+        maker: this.maker,
+        expiry: this.expiry,
+        satoshi: this.satoshi,
+        meta: this.meta
+      })
+    ).toString("hex");
+  }
+
+  /**
+   * Get a PSBT _(Partially Signed Bitcoin Transaction)_ used to sign the order for
+   * future verification.
+   *
+   * The PSBT is a simple transaction with the location as input and an unspendable
+   * output. The output is unspendable to prevent the order from being broadcast
+   * while retaining the ability to verify the signature.
+   *
+   * @returns PSBT hex string.
+   */
+  async getPSBT(): Promise<string> {
+    return this.sado.order.psbt(this.location, this.maker);
+  }
+
+  /**
+   * Submit order signature used to verify the order in the future. The signature
+   * is generated using the private key of the maker.
+   *
+   * Format is either a signed message or a PSBT. If signed with BECH32 then desc
+   * is required.
+   *
+   * @param value    - Signature.
+   * @param settings - Settings object describing the signing format.
+   */
+  sign(value: string, setting: SignatureSettings): this {
+    this.signature = new Signature(value, setting);
+    return this;
+  }
+
+  /**
+   * Submit order to the API to generate a CID _(Content Identifier)_ which is
+   * added to the order on success.
+   *
+   * Once the CID is generated the order CID can be relayed to the network.
+   *
+   * @returns Order instance.
+   */
+  async submit(): Promise<this> {
+    this.cid = await this.sado.order.submit(this);
+    return this;
+  }
+
+  toJSON() {
+    return {
+      cid: this.cid,
+      type: this.type,
+      ts: this.ts,
+      location: this.location,
+      cardinals: this.cardinals,
+      maker: this.maker,
+      expiry: this.expiry,
+      satoshi: this.satoshi,
+      meta: this.meta,
+      signature: this.signature?.value,
+      signature_format: this.signature?.format,
+      desc: this.signature?.desc
+    };
+  }
+}
+
+export type OrderRecord = {
   cid: string;
-
-  /**
-   * Timestamp to act as nonce.
-   *
-   * Note that this timestamp value may not be the actual
-   * timestamp for when the order was created. To get the sourced timestamp
-   * you need to check timestamp value on the blockchain transaction.
-   */
-  ts: number;
-
-  /**
-   * Order type.
-   */
-  type: OrderType;
-
-  /**
-   * Location of ordinal being sold in the format `txid:vout`.
-   */
-  location: string;
-
-  /**
-   * Address of the maker correlating to key used in signature.
-   *
-   * A maker address can be one of two types, a `legacy` or `bech32`. This is defined by
-   * the maker when they create their wallet.
-   *
-   * NOTE! When a maker address is a `bech32` address then a `desc` field is required.
-   */
-  maker: string;
-
-  /**
-   * Amount of satoshis required/offered to execute the fulfill the order.
-   *
-   * SELL - Integer number of lowest denomination required to purchase the ordinal.
-   * BUY  - Integer number offered to purchase the ordinal.
-   *
-   * @deprecated this value is slated to be removed in favor of `cardinals`.
-   */
-  satoshis?: string;
-
-  /**
-   * Amount of satoshis required/offered to execute the fulfill the order.
-   *
-   * SELL - Integer number of lowest denomination required to purchase the ordinal.
-   * BUY  - Integer number offered to purchase the ordinal.
-   */
-  cardinals?: string;
-
-  /**
-   * Satoshi is used when a seller or buyer wants to trade inscriptions.
-   * Location of the transaction the seller or buyer wishes to receive.
-   */
-  satoshi?: string;
-
-  /**
-   * List of addresses that are allowed to take this order.
-   */
-  orderbooks?: string[];
-
-  /**
-   * Metadata attached to the order.
-   */
-  meta?: Record<string, unknown>;
-
-  /**
-   * Signature.
-   */
-  signature: string;
-
-  /**
-   * Descriptor for BECH32 addresses.
-   * NOTE! This is required if the maker is using a BECH32 address.
-   */
-  desc?: string;
-};
+} & OrderPayload &
+  OrderSignature;
 
 export type OrderType = "sell" | "buy";
+
+export type OrderPayload = {
+  type: OrderType;
+  ts: number;
+  location: string;
+  cardinals: number;
+  maker: string;
+  expiry?: number;
+  satoshi?: number;
+  meta?: Record<string, any>;
+};
+
+export type OrderSignature = {
+  signature: string;
+  signature_format?: string;
+  pubkey?: string;
+  desc?: string;
+};

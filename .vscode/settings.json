@@ -27,6 +27,7 @@
     "**/Thumbs.db": true
   },
   "cSpell.words": [
+    "bcrt",
     "bech32",
     "clipanion",
     "ipfs",
@@ -38,6 +39,7 @@
     "satoshi",
     "satoshis",
     "txid",
+    "unspendable",
     "vout"
   ],
   "typescript.tsdk": "node_modules/typescript/lib"
