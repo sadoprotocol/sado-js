@@ -1,8 +1,4 @@
-<p align="center">
-  <img src="https://github.com/sadoprotocol/sado-js/assets/1998130/0bef9c76-0d43-47b9-9991-c937174ec795" width="180" height="180" />
-</p>
-
-# Sado
+# Sado JS
 
 Sado SDK. A collection of TypeScript + JavaScript tools and libraries to build application and services on top of the Sado Protocol.
 
@@ -22,10 +18,12 @@ Install and build dependencies across all project folders:
 $ pnpm install
 ```
 
-### Testing
+### Local CLI
 
-We use jest for testing, just run the following command from root:
+You can install and use the CLI locally for development purposes by running the following command:
 
-```ts
-$ pnpm test
+```sh
+$ pnpm local
 ```
+
+This will install the CLI locally allowing you to use local version of the CLI in your terminal.
