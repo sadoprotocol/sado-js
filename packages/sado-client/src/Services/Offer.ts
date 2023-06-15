@@ -12,7 +12,7 @@ export class OfferService {
    * @returns Offer result.
    */
   async get(cid: string): Promise<Offer> {
-    return this.sado.rpc.call<Offer>("offer.get", { cid }, this.sado.rpc.id);
+    return this.sado.rpc.call<Offer>("offer.getOffer", { cid }, this.sado.rpc.id);
   }
 
   /**

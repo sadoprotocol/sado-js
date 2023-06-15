@@ -1,4 +1,4 @@
-import { Order, OrderPayload, OrderRecord, OrderSignature } from "../Models/Order";
+import { Order, OrderPayload, OrderRecord, OrderSignature, SubmitResponse } from "../Models/Order";
 import { Signature } from "../Models/Signature";
 import type { SadoClient } from "../SadoClient";
 
@@ -42,7 +42,7 @@ export class OrderService {
    * @returns Order result.
    */
   async get(cid: string): Promise<Order> {
-    const record = await this.sado.rpc.call<OrderRecord>("order.get", { cid }, this.sado.rpc.id);
+    const record = await this.sado.rpc.call<OrderRecord>("order.getOrder", { cid }, this.sado.rpc.id);
     return Order.for(this.sado, record);
   }
 
@@ -56,41 +56,50 @@ export class OrderService {
    * @returns PSBT hex.
    */
   async psbt(location: string, maker: string): Promise<string> {
-    return this.sado.rpc.call<string>("order.psbt", { location, maker, network: this.sado.network }, this.sado.rpc.id);
+    return this.sado.rpc.call<string>(
+      "order.getPsbtSignature",
+      { location, maker, network: this.sado.network },
+      this.sado.rpc.id
+    );
   }
 
   /**
    * Submit a partial order to the API to generate a CID _(Content Identifier)_.
    *
-   * @param order - Order to submit.
+   * @param order      - Order to submit.
+   * @param networkFee - Network fee incentive to apply to the transaction.
+   * @param feeRate    - Fee rate to apply to the transaction.
    *
    * @returns CID of order.
    */
-  async submit(order: Order): Promise<string> {
+  async submit(order: Order, networkFee = 1000, feeRate = 15): Promise<SubmitResponse> {
     if (order.signature === undefined) {
       throw new Error("You cannot submit an order without a signature");
     }
-    return this.sado.rpc.call<string>(
-      "order.sell",
-      {
-        network: this.sado.network,
-        order: {
-          type: order.type,
-          ts: order.ts,
-          location: order.location,
-          cardinals: order.cardinals,
-          maker: order.maker,
-          expiry: order.expiry,
-          satoshi: order.satoshi
-        },
-        signature: {
-          value: order.signature.value,
-          format: order.signature.format,
-          desc: order.signature.desc
-        }
+    const payload = {
+      network: this.sado.network,
+      order: {
+        type: order.type,
+        ts: order.ts,
+        location: order.location,
+        cardinals: order.cardinals,
+        maker: order.maker,
+        expiry: order.expiry,
+        satoshi: order.satoshi,
+        meta: order.meta,
+        orderbooks: order.orderbooks
       },
-      this.sado.rpc.id
-    );
+      signature: {
+        value: order.signature.value,
+        format: order.signature.format,
+        desc: order.signature.desc
+      },
+      fees: {
+        network: networkFee,
+        rate: feeRate
+      }
+    };
+    return this.sado.rpc.call<SubmitResponse>("order.createOrder", payload, this.sado.rpc.id);
   }
 }
 

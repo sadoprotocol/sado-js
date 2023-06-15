@@ -1,5 +1,5 @@
 {
-  "name": "@sado/cli",
+  "name": "@sadoprotocol/cli",
   "version": "0.0.0",
   "description": "Command line interface for interacting with the sado protocol",
   "repository": "https://github.com/sadoprotocol/sado-js",

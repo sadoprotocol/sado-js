@@ -1,7 +1,7 @@
 {
-  "name": "@sado/client",
+  "name": "@sadoprotocol/sdk",
   "version": "0.0.0",
-  "description": "Client for simplified interaction with the Sado Protocol",
+  "description": "SDK for simplified interaction with the Sado Protocol",
   "repository": "https://github.com/sadoprotocol/sado-js",
   "bugs": "https://github.com/sadoprotocol/sado-js/issues",
   "license": "MIT",

@@ -1,5 +1,5 @@
-import { SadoClient } from "..";
-import { Signature, SignatureSettings } from "./Signature";
+import type { SadoClient } from "..";
+import { Signature, type SignatureSettings } from "./Signature";
 
 export class Order {
   cid?: string;
@@ -13,6 +13,7 @@ export class Order {
   readonly expiry?: number;
   readonly satoshi?: number;
   readonly meta?: Record<string, any>;
+  readonly orderbooks?: string[];
 
   signature?: Signature;
 
@@ -25,6 +26,7 @@ export class Order {
     this.expiry = order.expiry;
     this.satoshi = order.satoshi;
     this.meta = order.meta;
+    this.orderbooks = order.orderbooks;
   }
 
   static for(sado: SadoClient, record: OrderRecord): Order {
@@ -55,7 +57,8 @@ export class Order {
         maker: this.maker,
         expiry: this.expiry,
         satoshi: this.satoshi,
-        meta: this.meta
+        meta: this.meta,
+        orderbooks: this.orderbooks
       })
     ).toString("hex");
   }
@@ -93,13 +96,10 @@ export class Order {
    * Submit order to the API to generate a CID _(Content Identifier)_ which is
    * added to the order on success.
    *
-   * Once the CID is generated the order CID can be relayed to the network.
-   *
-   * @returns Order instance.
+   * @returns Partially signed bitcoin transaction to broadcast.
    */
-  async submit(): Promise<this> {
-    this.cid = await this.sado.order.submit(this);
-    return this;
+  async submit(): Promise<SubmitResponse> {
+    return this.sado.order.submit(this);
   }
 
   toJSON() {
@@ -113,6 +113,7 @@ export class Order {
       expiry: this.expiry,
       satoshi: this.satoshi,
       meta: this.meta,
+      orderbooks: this.orderbooks,
       signature: this.signature?.value,
       signature_format: this.signature?.format,
       desc: this.signature?.desc
@@ -136,6 +137,7 @@ export type OrderPayload = {
   expiry?: number;
   satoshi?: number;
   meta?: Record<string, any>;
+  orderbooks?: string[];
 };
 
 export type OrderSignature = {
@@ -143,4 +145,9 @@ export type OrderSignature = {
   signature_format?: string;
   pubkey?: string;
   desc?: string;
+};
+
+export type SubmitResponse = {
+  cid: string;
+  psbt: string;
 };

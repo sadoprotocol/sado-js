@@ -1,21 +1,24 @@
-import clipboard from "clipboardy";
+import { Option } from "clipanion";
 
 import { ApiCommand } from "../../../ApiCommand";
 import { confirmOrder } from "./Prompts/GetOrderConfirmation";
-import { getOrderPayload } from "./Prompts/GetOrderPayload";
 import { getSignature } from "./Prompts/GetSignature";
 import { getSignatureFormat } from "./Prompts/GetSignatureFormat";
 
 export class CreateOrder extends ApiCommand {
-  static paths = [["order.create"]];
+  static paths = [["order", "create"]];
+
+  readonly data = Option.String();
 
   async execute(): Promise<void> {
     print(`
       Sado Protocol > Create Order
     `);
     try {
-      const [data, maker] = await getOrderPayload();
-      const order = this.client.order.create(data);
+      const order = this.client.order.create(JSON.parse(Buffer.from(this.data, "base64").toString("utf-8")));
+
+      print("Creating order...");
+      console.log(order.toJSON());
 
       print(`
         Collecting signature for order
@@ -26,13 +29,9 @@ export class CreateOrder extends ApiCommand {
       const format = await getSignatureFormat();
       switch (format) {
         case "psbt": {
-          if (maker.type === "p2pkh") {
-            throw new Error("PSBT signing is not supported for P2PKH addresses");
-          }
           const psbt = await order.getPSBT();
-          clipboard.writeSync(psbt);
           print(`
-            Sign the following PSBT with your private key:\n
+            Sign the following PSBT with your wallet:\n
             ${psbt}
           `);
           signature = await getSignature();
@@ -40,9 +39,8 @@ export class CreateOrder extends ApiCommand {
         }
         case "message": {
           const message = order.getMessage();
-          clipboard.writeSync(message);
           print(`
-            Sign the following message with your private key:\n
+            Sign the following message with your wallet:\n
             ${message}
           `);
           signature = await getSignature();
@@ -66,11 +64,18 @@ export class CreateOrder extends ApiCommand {
       const submit = await confirmOrder();
       if (submit === false) {
         print("Order cancelled");
+      } else {
+        print("Creating order...");
+        const { cid, psbt } = await order.submit();
+        print(`
+          Order created successfully!
+
+          CID  : ${cid}
+          PSBT : ${psbt}
+
+          Use "sado order get ${cid}" to view the order details, and once you are ready to broadcast the transaction. Use your wallet to sign and relay the to the network.
+        `);
       }
-
-      await order.submit();
-
-      console.log(order.toJSON());
     } catch (error) {
       console.error(`Failed to create order: ${error.message}`);
     }

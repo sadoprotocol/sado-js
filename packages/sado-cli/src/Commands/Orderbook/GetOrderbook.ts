@@ -3,7 +3,7 @@ import { Option } from "clipanion";
 import { ApiCommand } from "../../ApiCommand";
 
 export class GetOrderbook extends ApiCommand {
-  static paths = [["orderbook.get"]];
+  static paths = [["orderbook", "get"]];
 
   address = Option.String();
 
