@@ -1,4 +1,4 @@
-import { OrderFilter } from "@sado/client";
+import { OrderFilter } from "@sadoprotocol/sdk";
 import { Option } from "clipanion";
 
 import { ApiCommand } from "../../ApiCommand";

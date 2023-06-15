@@ -16,15 +16,8 @@
     "test": "turbo run test -- --forceExit"
   },
   "devDependencies": {
-    "@sado/eslint-config": "workspace:*",
-    "@sado/prettier": "workspace:*",
-    "@sado/typescript": "workspace:*",
+    "husky": "8.0.3",
+    "prettier": "2.8.8",
     "turbo": "1.9.1"
-  },
-  "lint-staged": {
-    "*": [
-      "prettier --write --ignore-unknown"
-    ]
-  },
-  "prettier": "@sado/prettier"
+  }
 }

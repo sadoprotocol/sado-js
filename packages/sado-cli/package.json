@@ -15,27 +15,29 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@sado/client": "workspace:*",
+    "@sadoprotocol/sdk": "workspace:*",
     "clipanion": "3.2.0",
-    "clipboardy": "^2.3.0",
     "inquirer": "^8.2.5"
   },
   "devDependencies": {
+    "@sadoprotocol/eslint-config": "workspace:*",
+    "@sadoprotocol/typescript": "workspace:*",
     "@types/inquirer": "^7.3.3"
   },
   "eslintConfig": {
+    "root": true,
+    "extends": [
+      "@sadoprotocol"
+    ],
     "parserOptions": {
       "project": "./tsconfig.json"
-    },
-    "extends": [
-      "@sado"
-    ]
+    }
   },
   "lint-staged": {
     "*": [
       "prettier --write --ignore-unknown"
     ],
-    "*.{ts,tsx}": [
+    "*.{ts}": [
       "eslint --fix"
     ]
   }

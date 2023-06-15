@@ -1,18 +1,16 @@
 {
-  "editor.formatOnSave": true,
-  "editor.formatOnPaste": false,
-  "editor.codeActionsOnSave": {
-    "source.fixAll": true
-  },
-  "scss.lint.unknownAtRules": "ignore",
+  "prettier.prettierPath": "./node_modules/prettier",
+  "prettier.configPath": "./.prettierrc",
   "eslint.workingDirectories": [
     {
       "mode": "auto"
     }
   ],
-  "editor.tabSize": 2,
-  "editor.insertSpaces": true,
-  "editor.detectIndentation": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
   "material-icon-theme.files.associations": {
     "index.ts": "tree",
   },
@@ -42,5 +40,8 @@
     "unspendable",
     "vout"
   ],
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }
