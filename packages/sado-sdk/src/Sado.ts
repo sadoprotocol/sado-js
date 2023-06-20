@@ -25,7 +25,7 @@ import { makeOrderbookService, OrderbookService } from "./Services/Orderbook";
  |
  */
 
-export class SadoClient {
+export class Sado {
   readonly rpc: JsonRpc;
 
   readonly order: OrderService;

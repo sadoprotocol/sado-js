@@ -1,8 +1,8 @@
 import type { Offer } from "../Models/Offer";
-import type { SadoClient } from "../SadoClient";
+import type { Sado } from "../Sado";
 
 export class OfferService {
-  constructor(readonly sado: SadoClient) {}
+  constructor(readonly sado: Sado) {}
 
   /**
    * Retrieve an offer by its CID _(Content Identifier)_.
@@ -34,6 +34,6 @@ export class OfferService {
  |--------------------------------------------------------------------------------
  */
 
-export function makeOfferService(sado: SadoClient, Service = OfferService) {
+export function makeOfferService(sado: Sado, Service = OfferService) {
   return new Service(sado);
 }

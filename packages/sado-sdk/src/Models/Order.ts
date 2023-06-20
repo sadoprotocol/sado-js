@@ -1,4 +1,4 @@
-import type { SadoClient } from "..";
+import type { Sado } from "..";
 import { Signature, type SignatureSettings } from "./Signature";
 
 export class Order {
@@ -17,7 +17,7 @@ export class Order {
 
   signature?: Signature;
 
-  constructor(readonly sado: SadoClient, order: OrderPayload) {
+  constructor(readonly sado: Sado, order: OrderPayload) {
     this.type = order.type;
     this.ts = order.ts;
     this.location = order.location;
@@ -29,7 +29,7 @@ export class Order {
     this.orderbooks = order.orderbooks;
   }
 
-  static for(sado: SadoClient, record: OrderRecord): Order {
+  static for(sado: Sado, record: OrderRecord): Order {
     const order = new Order(sado, record);
     order.cid = record.cid;
     order.signature = new Signature(record.signature, {
@@ -93,13 +93,13 @@ export class Order {
   }
 
   /**
-   * Submit order to the API to generate a CID _(Content Identifier)_ which is
+   * Create order to the API to generate a CID _(Content Identifier)_ which is
    * added to the order on success.
    *
    * @returns Partially signed bitcoin transaction to broadcast.
    */
-  async submit(): Promise<SubmitResponse> {
-    return this.sado.order.submit(this);
+  async create(): Promise<CreateResponse> {
+    return this.sado.order.create(this);
   }
 
   toJSON() {
@@ -147,7 +147,7 @@ export type OrderSignature = {
   desc?: string;
 };
 
-export type SubmitResponse = {
+export type CreateResponse = {
   cid: string;
   psbt: string;
 };

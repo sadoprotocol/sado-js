@@ -1,7 +1,7 @@
-import type { SadoClient } from "../SadoClient";
+import type { Sado } from "../Sado";
 
 export class OrderbookService {
-  constructor(readonly sado: SadoClient) {}
+  constructor(readonly sado: Sado) {}
 
   /**
    * Retrieve orderbook analytics data for the given address.
@@ -86,7 +86,7 @@ export class OrderbookService {
  |--------------------------------------------------------------------------------
  */
 
-export function makeOrderbookService(sado: SadoClient, Service = OrderbookService) {
+export function makeOrderbookService(sado: Sado, Service = OrderbookService) {
   return new Service(sado);
 }
 

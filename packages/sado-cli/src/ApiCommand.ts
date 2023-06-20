@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
-import { NetworkMemoryProvider, SadoClient } from "@sadoprotocol/sdk";
+import { NetworkMemoryProvider, Sado } from "@sadoprotocol/sdk";
 import { Command } from "clipanion";
 
 import { network, url } from "./Options";
@@ -24,8 +24,8 @@ export abstract class ApiCommand extends Command {
     return config;
   }
 
-  get client(): SadoClient {
-    return new SadoClient(this.url, { network: this.network });
+  get client(): Sado {
+    return new Sado(this.url, { network: this.network });
   }
 
   get url(): string {

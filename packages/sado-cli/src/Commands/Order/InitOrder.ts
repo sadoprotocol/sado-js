@@ -1,12 +1,12 @@
 import { Option } from "clipanion";
 
-import { ApiCommand } from "../../../ApiCommand";
+import { ApiCommand } from "../../ApiCommand";
 import { confirmOrder } from "./Prompts/GetOrderConfirmation";
 import { getSignature } from "./Prompts/GetSignature";
 import { getSignatureFormat } from "./Prompts/GetSignatureFormat";
 
-export class CreateOrder extends ApiCommand {
-  static paths = [["order", "create"]];
+export class InitOrder extends ApiCommand {
+  static paths = [["order", "init"]];
 
   readonly data = Option.String();
 
@@ -15,7 +15,7 @@ export class CreateOrder extends ApiCommand {
       Sado Protocol > Create Order
     `);
     try {
-      const order = this.client.order.create(JSON.parse(Buffer.from(this.data, "base64").toString("utf-8")));
+      const order = this.client.order.init(JSON.parse(Buffer.from(this.data, "base64").toString("utf-8")));
 
       print("Creating order...");
       console.log(order.toJSON());
@@ -66,7 +66,7 @@ export class CreateOrder extends ApiCommand {
         print("Order cancelled");
       } else {
         print("Creating order...");
-        const { cid, psbt } = await order.submit();
+        const { cid, psbt } = await order.create();
         print(`
           Order created successfully!
 

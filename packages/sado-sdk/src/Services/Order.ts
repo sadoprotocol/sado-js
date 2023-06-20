@@ -1,18 +1,18 @@
-import { Order, OrderPayload, OrderRecord, OrderSignature, SubmitResponse } from "../Models/Order";
+import { CreateResponse, Order, OrderPayload, OrderRecord, OrderSignature } from "../Models/Order";
 import { Signature } from "../Models/Signature";
-import type { SadoClient } from "../SadoClient";
+import type { Sado } from "../Sado";
 
 export class OrderService {
-  constructor(readonly sado: SadoClient) {}
+  constructor(readonly sado: Sado) {}
 
   /**
-   * Create a new order instance which can be validated, signed and submitted.
+   * Initialize a new order instance which can be validated, signed and submitted.
    *
    * @param payload - Order payload.
    *
    * @returns Order instance.
    */
-  create(payload: OrderPayload): Order {
+  init(payload: OrderPayload): Order {
     return new Order(this.sado, payload);
   }
 
@@ -64,7 +64,9 @@ export class OrderService {
   }
 
   /**
-   * Submit a partial order to the API to generate a CID _(Content Identifier)_.
+   * Verify the order details and create a new IPFS order record and a PSBT can
+   * be finalized and relayed to the blockchain to register with decentralized
+   * orderbooks.
    *
    * @param order      - Order to submit.
    * @param networkFee - Network fee incentive to apply to the transaction.
@@ -72,9 +74,9 @@ export class OrderService {
    *
    * @returns CID of order.
    */
-  async submit(order: Order, networkFee = 1000, feeRate = 15): Promise<SubmitResponse> {
+  async create(order: Order, networkFee = 1000, feeRate = 15): Promise<CreateResponse> {
     if (order.signature === undefined) {
-      throw new Error("You cannot submit an order without a signature");
+      throw new Error("You cannot submit an order without a signature.");
     }
     const payload = {
       network: this.sado.network,
@@ -99,7 +101,7 @@ export class OrderService {
         rate: feeRate
       }
     };
-    return this.sado.rpc.call<SubmitResponse>("order.createOrder", payload, this.sado.rpc.id);
+    return this.sado.rpc.call<CreateResponse>("order.createOrder", payload, this.sado.rpc.id);
   }
 }
 
@@ -109,6 +111,6 @@ export class OrderService {
  |--------------------------------------------------------------------------------
  */
 
-export function makeOrderService(sado: SadoClient, Service = OrderService) {
+export function makeOrderService(sado: Sado, Service = OrderService) {
   return new Service(sado);
 }
