@@ -1,5 +1,5 @@
 {
-  "name": "@sadoprotocol/sdk",
+  "name": "@sadoprotocol/sado-sdk",
   "version": "0.0.0",
   "description": "SDK for simplified interaction with the Sado Protocol",
   "repository": "https://github.com/sadoprotocol/sado-js",

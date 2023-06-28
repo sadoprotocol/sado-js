@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
-import { NetworkMemoryProvider, Sado } from "@sadoprotocol/sdk";
+import { NetworkMemoryProvider, Sado } from "@sadoprotocol/sado-sdk";
 import { Command } from "clipanion";
 
 import { network, url } from "./Options";

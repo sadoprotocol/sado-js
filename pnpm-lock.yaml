@@ -51,15 +51,17 @@ importers:
   packages/sado-cli:
     specifiers:
       '@sadoprotocol/eslint-config': workspace:*
-      '@sadoprotocol/sdk': workspace:*
+      '@sadoprotocol/sado-sdk': workspace:*
       '@sadoprotocol/typescript': workspace:*
       '@types/inquirer': ^7.3.3
       clipanion: 3.2.0
       inquirer: ^8.2.5
+      typanion: ^3.12.1
     dependencies:
-      '@sadoprotocol/sdk': link:../sado-sdk
+      '@sadoprotocol/sado-sdk': link:../sado-sdk
       clipanion: 3.2.0_typanion@3.12.1
       inquirer: 8.2.5
+      typanion: 3.12.1
     devDependencies:
       '@sadoprotocol/eslint-config': link:../../configs/eslint
       '@sadoprotocol/typescript': link:../../configs/typescript

@@ -1,5 +1,5 @@
 {
-  "name": "@sadoprotocol/cli",
+  "name": "@sadoprotocol/sado-cli",
   "version": "0.0.0",
   "description": "Command line interface for interacting with the sado protocol",
   "repository": "https://github.com/sadoprotocol/sado-js",
@@ -15,9 +15,10 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@sadoprotocol/sdk": "workspace:*",
+    "@sadoprotocol/sado-sdk": "workspace:*",
     "clipanion": "3.2.0",
-    "inquirer": "^8.2.5"
+    "inquirer": "^8.2.5",
+    "typanion": "^3.12.1"
   },
   "devDependencies": {
     "@sadoprotocol/eslint-config": "workspace:*",
