@@ -11,7 +11,7 @@ export class OfferService {
    *
    * @returns cid and psbt of the offer.
    */
-  async createOffer(params: OfferParams): Promise<OfferResponse> {
+  async create(params: OfferParams): Promise<OfferResponse> {
     return this.sado.rpc.call<OfferResponse>(
       "offer.createOffer",
       {
