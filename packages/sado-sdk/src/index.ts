@@ -1,5 +1,5 @@
 export type { Offer } from "./Models/Offer";
-export type { Order } from "./Models/Order";
+export { Order } from "./Models/Order";
 export type { Signature } from "./Models/Signature";
 export * from "./Network";
 export { Sado } from "./Sado";

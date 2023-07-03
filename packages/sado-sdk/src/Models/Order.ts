@@ -1,4 +1,3 @@
-import type { Sado } from "..";
 import { Signature, type SignatureSettings } from "./Signature";
 
 export class Order {
@@ -9,30 +8,31 @@ export class Order {
   readonly location: string;
   readonly cardinals: number;
   readonly maker: string;
+  readonly orderbooks: string[] = [];
 
-  readonly expiry?: number;
-  readonly satoshi?: number;
-  readonly meta?: Record<string, any>;
-  readonly orderbooks?: string[];
+  expiry?: number;
+  satoshi?: number;
+  meta?: Record<string, any>;
+
+  readonly fees = {
+    network: 1000,
+    rate: 10
+  };
 
   signature?: Signature;
 
-  constructor(readonly sado: Sado, order: OrderPayload) {
+  constructor(order: OrderPayload) {
     this.type = order.type;
-    this.ts = order.ts;
+    this.ts = Date.now();
     this.location = order.location;
     this.cardinals = order.cardinals;
     this.maker = order.maker;
-    this.expiry = order.expiry;
-    this.satoshi = order.satoshi;
-    this.meta = order.meta;
-    this.orderbooks = order.orderbooks;
   }
 
-  static for(sado: Sado, record: OrderRecord): Order {
-    const order = new Order(sado, record);
+  static for(record: OrderRecord): Order {
+    const order = new Order(record);
     order.cid = record.cid;
-    order.signature = new Signature(record.signature, {
+    order.addSignature(record.signature, {
       format: record.signature_format,
       desc: record.desc
     });
@@ -47,7 +47,7 @@ export class Order {
    *
    * @returns Message to sign.
    */
-  getMessage(): string {
+  createSignableMessage(): string {
     return Buffer.from(
       JSON.stringify({
         type: this.type,
@@ -64,17 +64,41 @@ export class Order {
   }
 
   /**
-   * Get a PSBT _(Partially Signed Bitcoin Transaction)_ used to sign the order for
-   * future verification.
+   * Add additional addresse for the order to be listed on.
    *
-   * The PSBT is a simple transaction with the location as input and an unspendable
-   * output. The output is unspendable to prevent the order from being broadcast
-   * while retaining the ability to verify the signature.
+   * @param address - Address to add to the order.
+   * @param fee     - Optional incentive fee for the orderbook.
    *
-   * @returns PSBT hex string.
+   * @returns Order instance.
    */
-  async getPSBT(): Promise<string> {
-    return this.sado.order.psbt(this.location, this.maker);
+  addOrderbook(address: string, fee = 600): this {
+    this.orderbooks.push(`${address}:${fee}`);
+    return this;
+  }
+
+  /**
+   * Remove order listing if it has not been completed within the given block height.
+   *
+   * @param blockHeight - Block height to expire order at.
+   *
+   * @returns Order instance.
+   */
+  addExpiry(blockHeight: number): this {
+    this.expiry = blockHeight;
+    return this;
+  }
+
+  /**
+   * Add meta data to your order which consumers can use to guide the presentation of
+   * the order to the client.
+   *
+   * @param meta - Meta data to attach to the order.
+   *
+   * @returns Order instance.
+   */
+  addMeta<T extends Record<string, any>>(meta: T): this {
+    this.meta = meta;
+    return this;
   }
 
   /**
@@ -87,21 +111,30 @@ export class Order {
    * @param value    - Signature.
    * @param settings - Settings object describing the signing format.
    */
-  sign(value: string, setting: SignatureSettings): this {
+  addSignature(value: string, setting: SignatureSettings): this {
     this.signature = new Signature(value, setting);
     return this;
   }
 
   /**
-   * Create order to the API to generate a CID _(Content Identifier)_ which is
-   * added to the order on success.
+   * Add custom incentive fees for the order to be picked up by the mempool.
    *
-   * @returns Partially signed bitcoin transaction to broadcast.
+   * @param network - Flat network fee.
+   * @param rate    - Mempool fee rate.
+   *
+   * @returns Order instance.
    */
-  async create(): Promise<CreateResponse> {
-    return this.sado.order.create(this);
+  addFees(network: number, rate: number): this {
+    this.fees.network = network;
+    this.fees.rate = rate;
+    return this;
   }
 
+  /**
+   * Convert the order instance to a JSON object.
+   *
+   * @returns Order as JSON.
+   */
   toJSON() {
     return {
       cid: this.cid,

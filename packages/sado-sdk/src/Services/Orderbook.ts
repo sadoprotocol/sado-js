@@ -12,10 +12,10 @@ export class OrderbookService {
    */
   async analytics(address: string): Promise<any> {
     return this.sado.rpc.call<any>(
-      "orderbook.getAnalytics",
+      "GetOrderbookAnalytics",
       {
-        address,
-        network: this.sado.network
+        network: this.sado.network,
+        address
       },
       this.sado.rpc.id
     );
@@ -30,10 +30,10 @@ export class OrderbookService {
    */
   async get(address: string): Promise<Orderbook> {
     return this.sado.rpc.call<Orderbook>(
-      "orderbook.getOrderbook",
+      "GetOrderbook",
       {
-        address,
-        network: this.sado.network
+        network: this.sado.network,
+        address
       },
       this.sado.rpc.id
     );
@@ -49,11 +49,11 @@ export class OrderbookService {
    */
   async orders(address: string, filter: OrderFilter): Promise<any[]> {
     return this.sado.rpc.call<any[]>(
-      "orderbook.getOrders",
+      "GetOrderbookOrders",
       {
+        network: this.sado.network,
         address,
-        filter,
-        network: this.sado.network
+        filter
       },
       this.sado.rpc.id
     );
@@ -69,11 +69,11 @@ export class OrderbookService {
    */
   async offers(address: string, filter: OrderFilter): Promise<any[]> {
     return this.sado.rpc.call<any[]>(
-      "orderbook.getOffers",
+      "GetOrderbookOffers",
       {
+        network: this.sado.network,
         address,
-        filter,
-        network: this.sado.network
+        filter
       },
       this.sado.rpc.id
     );

@@ -13,7 +13,7 @@ export class OfferService {
    */
   async create(params: OfferParams): Promise<OfferResponse> {
     return this.sado.rpc.call<OfferResponse>(
-      "offer.createOffer",
+      "CreateOffer",
       {
         network: this.sado.network,
         ts: Date.now(),
@@ -33,7 +33,7 @@ export class OfferService {
    */
   async getOfferPsbt(params: OfferPsbtParams): Promise<OfferPsbtResponse> {
     return this.sado.rpc.call<OfferPsbtResponse>(
-      "offer.createOfferPSBT",
+      "CreateOfferPsbt",
       {
         network: this.sado.network,
         ...params
@@ -50,7 +50,7 @@ export class OfferService {
    * @returns Offer result.
    */
   async get(cid: string): Promise<Offer> {
-    return this.sado.rpc.call<Offer>("offer.getOffer", { cid }, this.sado.rpc.id);
+    return this.sado.rpc.call<Offer>("GetOffer", { cid }, this.sado.rpc.id);
   }
 
   /**
@@ -62,7 +62,7 @@ export class OfferService {
    * @returns Decoded offer result.
    */
   async decode(cid: string): Promise<any> {
-    return this.sado.rpc.call<Offer>("offer.decode", { cid }, this.sado.rpc.id);
+    return this.sado.rpc.call<Offer>("DecodeOffer", { cid }, this.sado.rpc.id);
   }
 }
 

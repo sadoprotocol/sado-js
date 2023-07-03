@@ -1,3 +1,4 @@
+import { Order } from "@sadoprotocol/sado-sdk";
 import { Option } from "clipanion";
 
 import { ApiCommand } from "../../ApiCommand";
@@ -9,8 +10,8 @@ export class CreateOrder extends ApiCommand {
 
   async execute(): Promise<void> {
     try {
-      const order = await this.client.order.load(JSON.parse(Buffer.from(this.data, "base64").toString("utf-8")));
-      console.log(await order.create());
+      const order = await Order.for(JSON.parse(Buffer.from(this.data, "base64").toString("utf-8")));
+      console.log(await this.client.order.create(order));
     } catch (error) {
       console.error(`Failed to create order: ${error.message}`);
     }

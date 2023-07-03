@@ -1,3 +1,4 @@
+import { Order } from "@sadoprotocol/sado-sdk";
 import { Option } from "clipanion";
 
 import { ApiCommand } from "../../ApiCommand";
@@ -15,7 +16,7 @@ export class InitOrder extends ApiCommand {
       Sado Protocol > Create Order
     `);
     try {
-      const order = this.client.order.init(JSON.parse(Buffer.from(this.data, "base64").toString("utf-8")));
+      const order = new Order(JSON.parse(Buffer.from(this.data, "base64").toString("utf-8")));
 
       print("Creating order...");
       console.log(order.toJSON());
@@ -29,7 +30,7 @@ export class InitOrder extends ApiCommand {
       const format = await getSignatureFormat();
       switch (format) {
         case "psbt": {
-          const psbt = await order.getPSBT();
+          const psbt = await this.client.order.createSignablePsbt(order.location, order.maker);
           print(`
             Sign the following PSBT with your wallet:\n
             ${psbt}
@@ -38,7 +39,7 @@ export class InitOrder extends ApiCommand {
           break;
         }
         case "message": {
-          const message = order.getMessage();
+          const message = order.createSignableMessage();
           print(`
             Sign the following message with your wallet:\n
             ${message}
@@ -52,7 +53,7 @@ export class InitOrder extends ApiCommand {
         throw new Error("No signature provided");
       }
 
-      order.sign(signature, {
+      order.addSignature(signature, {
         format
       });
 
@@ -66,7 +67,7 @@ export class InitOrder extends ApiCommand {
         print("Order cancelled");
       } else {
         print("Creating order...");
-        const { cid, psbt } = await order.create();
+        const { cid, psbt } = await this.client.order.create(order);
         print(`
           Order created successfully!
 
