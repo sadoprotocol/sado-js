@@ -16,7 +16,7 @@
     "sdk"
   ],
   "scripts": {
-    "build": "tsc -b ./tsconfig.build.json",
+    "build": "vite build && tsc -b ./tsconfig.build.json",
     "flush": "npm run clean && rm -rf ./node_modules",
     "clean": "rm -rf ./.turbo ./dist",
     "lint": "eslint ."
@@ -26,7 +26,8 @@
   },
   "devDependencies": {
     "@sadoprotocol/eslint-config": "workspace:*",
-    "@sadoprotocol/typescript": "workspace:*"
+    "@sadoprotocol/typescript": "workspace:*",
+    "vite": "4.3.9"
   },
   "eslintConfig": {
     "root": true,

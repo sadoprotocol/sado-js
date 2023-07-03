@@ -2,7 +2,7 @@
   "extends": "@sadoprotocol/typescript",
   "compilerOptions": {
     "rootDir": "./",
-    "outDir": "./dist",
+    "outDir": "./dist"
   },
-  "include": ["./src", "./tests"]
+  "include": ["./src"]
 }
