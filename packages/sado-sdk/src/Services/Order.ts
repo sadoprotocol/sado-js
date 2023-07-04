@@ -70,7 +70,8 @@ export class OrderService {
         signature: {
           value: order.signature.value,
           format: order.signature.format,
-          desc: order.signature.desc
+          desc: order.signature.desc,
+          pubkey: order.signature.pubkey
         },
         fees: {
           network: order.fees.network,

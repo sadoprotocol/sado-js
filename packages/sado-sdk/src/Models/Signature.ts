@@ -9,11 +9,16 @@ export class Signature {
     return this.settings?.desc;
   }
 
+  get pubkey(): string | undefined {
+    return this.settings?.pubkey;
+  }
+
   toJSON() {
     return {
       value: this.value,
       format: this.format,
-      desc: this.desc
+      desc: this.desc,
+      pubkey: this.pubkey
     };
   }
 }
@@ -21,4 +26,5 @@ export class Signature {
 export type SignatureSettings = {
   format?: string;
   desc?: string;
+  pubkey?: string;
 };
