@@ -44,11 +44,12 @@ export class OrderService {
    * be finalized and relayed to the blockchain to register with decentralized
    * orderbooks.
    *
-   * @param order - Order to submit.
+   * @param order       - Order to submit.
+   * @param satsPerByte - Satoshis per byte to use for fee calculation.
    *
    * @returns CID of order.
    */
-  async create(order: Order): Promise<CreateResponse> {
+  async create(order: Order, satsPerByte: number): Promise<CreateResponse> {
     if (order.signature === undefined) {
       throw new Error("You cannot submit an order without a signature.");
     }
@@ -73,7 +74,7 @@ export class OrderService {
           desc: order.signature.desc,
           pubkey: order.signature.pubkey
         },
-        satsPerByte: order.satsPerByte
+        satsPerByte
       },
       this.sado.rpc.id
     );

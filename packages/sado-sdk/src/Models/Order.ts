@@ -15,7 +15,6 @@ export class Order {
   meta?: Record<string, any>;
 
   signature?: Signature;
-  satsPerByte?: number;
 
   constructor(order: OrderPayload) {
     this.type = order.type;
@@ -109,18 +108,6 @@ export class Order {
    */
   addSignature(value: string, setting: SignatureSettings): this {
     this.signature = new Signature(value, setting);
-    return this;
-  }
-
-  /**
-   * Add custom incentive fees for the order to be picked up by the mempool.
-   *
-   * @param value - Satoshis per byte.
-   *
-   * @returns Order instance.
-   */
-  setSatsPerByte(value: number): this {
-    this.satsPerByte = value;
     return this;
   }
 
