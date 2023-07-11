@@ -14,12 +14,8 @@ export class Order {
   satoshi?: number;
   meta?: Record<string, any>;
 
-  readonly fees = {
-    network: 1000,
-    rate: 10
-  };
-
   signature?: Signature;
+  satsPerByte?: number;
 
   constructor(order: OrderPayload) {
     this.type = order.type;
@@ -119,14 +115,12 @@ export class Order {
   /**
    * Add custom incentive fees for the order to be picked up by the mempool.
    *
-   * @param network - Flat network fee.
-   * @param rate    - Mempool fee rate.
+   * @param value - Satoshis per byte.
    *
    * @returns Order instance.
    */
-  addFees(network: number, rate: number): this {
-    this.fees.network = network;
-    this.fees.rate = rate;
+  setSatsPerByte(value: number): this {
+    this.satsPerByte = value;
     return this;
   }
 

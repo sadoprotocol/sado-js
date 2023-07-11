@@ -73,10 +73,7 @@ export class OrderService {
           desc: order.signature.desc,
           pubkey: order.signature.pubkey
         },
-        fees: {
-          network: order.fees.network,
-          rate: order.fees.rate
-        }
+        satsPerByte: order.satsPerByte
       },
       this.sado.rpc.id
     );
