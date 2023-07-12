@@ -29,4 +29,4 @@ export type NetworkProvider = {
   get(): Network;
 };
 
-export type Network = "mainnet" | "testnet" | "regtest";
+export type Network = (typeof VALID_NETWORK)[number];

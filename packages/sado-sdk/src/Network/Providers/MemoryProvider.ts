@@ -1,14 +1,19 @@
-import { DEFAULT_NETWORK, isValidNetwork, Network } from "../Network";
+import { DEFAULT_NETWORK, isValidNetwork, Network, NetworkProvider } from "../Network";
 
-export class NetworkMemoryProvider {
+export class NetworkMemoryProvider implements NetworkProvider {
   #value: Network = DEFAULT_NETWORK;
 
+  /**
+   * Instantiates a new NetworkMemoryProvider instance.
+   *
+   * @param value - Initial network value.
+   */
   constructor(value?: string) {
     if (value !== undefined) {
       if (!isValidNetwork(value)) {
         throw new Error(`Invalid network: ${value}`);
       }
-      this.#value = value;
+      this.set(value);
     }
   }
 
