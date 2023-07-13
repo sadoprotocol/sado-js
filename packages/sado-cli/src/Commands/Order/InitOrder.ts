@@ -67,7 +67,7 @@ export class InitOrder extends ApiCommand {
         print("Order cancelled");
       } else {
         print("Creating order...");
-        const { cid, psbt } = await this.client.order.create(order);
+        const { cid, psbt } = await this.client.order.create(order, 15);
         print(`
           Order created successfully!
 
